@@ -15,8 +15,9 @@ class NewsArticleAdmin(admin.ModelAdmin):
     ordering = ('-published_at',)
     
 @admin.register(Comment)
-class CommentAdmin(admin.ModelAdmin):       
-    list_display = ('article', 'author_name', 'created_at')
-    search_fields = ('article__title', 'author_name__username', 'author_name__email', 'content')
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('article', 'author_name', 'content', 'created_at')
+    search_fields = ('content', 'author_name__username', 'article__title')
     list_filter = ('created_at',)
     ordering = ('-created_at',)
+    
