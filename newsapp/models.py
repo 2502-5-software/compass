@@ -34,6 +34,6 @@ class Comment(models.Model):
     parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
 
     def __str__(self):
-        if self.author:
-            return f'Comment by {self.author.username} on {self.article.title}'
+        if self.author_name:
+            return f'Comment by {self.author_name.username} on {self.article.title}'
         return f'Comment by Anonymous on {self.article.title}'

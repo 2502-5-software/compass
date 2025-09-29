@@ -4,8 +4,9 @@ from .forms import NewsArticleForm, UpdateNewsArticleForm
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from .forms import CommentForm
-from .serializers import NewsArticleSerializer
+from .serializers import NewsArticleSerializer, CategorySerializer, CommentSerializer
 from rest_framework import viewsets
+from .permissions import IsAdminOrEditorOrOwnerWriter   
 
 
 def index(request):
@@ -93,3 +94,13 @@ def update_news_article(request, article_id):
 class NewsArticleViewSet(viewsets.ModelViewSet):
     queryset = NewsArticle.objects.all()
     serializer_class = NewsArticleSerializer
+    permission_classes = [IsAdminOrEditorOrOwnerWriter
+                          ]
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer   
+    
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer    
