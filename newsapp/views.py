@@ -4,6 +4,8 @@ from .forms import NewsArticleForm, UpdateNewsArticleForm
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from .forms import CommentForm
+from .serializers import NewsArticleSerializer
+from rest_framework import viewsets
 
 
 def index(request):
@@ -86,3 +88,8 @@ def update_news_article(request, article_id):
         form = UpdateNewsArticleForm(instance=article)
     
     return render(request, 'newsapp/update_article.html', {'form': form, 'article': article})
+
+
+class NewsArticleViewSet(viewsets.ModelViewSet):
+    queryset = NewsArticle.objects.all()
+    serializer_class = NewsArticleSerializer
