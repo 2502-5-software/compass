@@ -94,9 +94,10 @@ def update_news_article(request, article_id):
 class NewsArticleViewSet(viewsets.ModelViewSet):
     queryset = NewsArticle.objects.all()
     serializer_class = NewsArticleSerializer
-    permission_classes = [IsAdminOrEditorOrOwnerWriter
-                          ]
-
+    permission_classes = [IsAdminOrEditorOrOwnerWriter]
+    
+    def perform_create(self, serializer):
+        serializer.save(writer=self.request.user)
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer   

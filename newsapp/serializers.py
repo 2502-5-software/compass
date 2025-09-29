@@ -3,6 +3,7 @@ from .models import NewsArticle, Category, Comment
 
 
 class NewsArticleSerializer(serializers.ModelSerializer):
+    writer = serializers.PrimaryKeyRelatedField(read_only=True)
     class Meta:
         model = NewsArticle
         fields = '__all__'
