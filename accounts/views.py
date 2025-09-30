@@ -48,17 +48,17 @@ class logoutView(View):
         return redirect('login')
     
     
-class RegisterView(generics.CreateAPIView):
+class RegisterAPIView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = RegisterSerializer
     permission_classes = [permissions.AllowAny]
     
-class UserListView(generics.ListAPIView):
+class UserListAPIView(generics.ListAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated, IsSuperAdmin]
     
-class AssignRoleView(generics.UpdateAPIView):
+class AssignRoleAPIView(generics.UpdateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = RoleUpdateSerializer
     permission_classes = [permissions.IsAuthenticated, IsSuperAdmin]
