@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.views import View
 from django.contrib.auth import login
 from django.contrib.auth import authenticate, logout
-from .serializers import RegisterSerializer, UserSerializer, RoleUpdateSerializer, LoginSerializer
+from .serializers import RegisterSerializer, UserSerializer, RoleUpdateSerializer, LoginSerializer, ProfileDetailSerializer
 from rest_framework import generics, permissions, status
 from .models import CustomUser, Profile
 from .permissions import IsSuperAdmin
@@ -83,4 +83,9 @@ class LoginAPIView(APIView):
             "refresh": str(refresh),
             "access": str(refresh.access_token),
         }, status=status.HTTP_200_OK)
-        
+
+class ProfileDetailView(generics.RetrieveUpdateAPIView):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileDetailSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_field = "pk"
