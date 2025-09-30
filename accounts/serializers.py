@@ -43,3 +43,11 @@ class LoginSerializer(serializers.Serializer):
             raise serializers.ValidationError("User account is disabled")
         
         return user
+    
+class ProfileDetailSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    
+    class Meta:
+        model = Profile
+        
+        fields = "__all__"
