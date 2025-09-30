@@ -4,6 +4,10 @@ from django.contrib import messages
 from django.views import View
 from django.contrib.auth import login
 from django.contrib.auth import authenticate, logout
+from .serializers import RegisterSerializer, UserSerializer, RoleUpdateSerializer
+from rest_framework import generics, permissions
+from .models import CustomUser, Profile
+from .permissions import IsSuperAdmin
 
 class RegisterView(View):
     def get(self, request):
@@ -42,3 +46,20 @@ class logoutView(View):
         logout(request)
         messages.success(request, 'You have been logged out.')
         return redirect('login')
+    
+    
+class RegisterView(generics.CreateAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = RegisterSerializer
+    permission_classes = [permissions.AllowAny]
+    
+class UserListView(generics.ListAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated, IsSuperAdmin]
+    
+class AssignRoleView(generics.UpdateAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = RoleUpdateSerializer
+    permission_classes = [permissions.IsAuthenticated, IsSuperAdmin]
+    lookup_field = 'pk'
