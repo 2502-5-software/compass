@@ -4,11 +4,13 @@ from django.contrib import messages
 from django.views import View
 from django.contrib.auth import login
 from django.contrib.auth import authenticate, logout
-from .serializers import RegisterSerializer, UserSerializer, RoleUpdateSerializer
-from rest_framework import generics, permissions
+from .serializers import RegisterSerializer, UserSerializer, RoleUpdateSerializer, LoginSerializer
+from rest_framework import generics, permissions, status
 from .models import CustomUser, Profile
 from .permissions import IsSuperAdmin
-
+from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.response import Response
 class RegisterView(View):
     def get(self, request):
         form = UserRegistrationForm()
@@ -63,3 +65,22 @@ class AssignRoleAPIView(generics.UpdateAPIView):
     serializer_class = RoleUpdateSerializer
     permission_classes = [permissions.IsAuthenticated, IsSuperAdmin]
     lookup_field = 'pk'
+    
+class LoginAPIView(APIView):
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data
+        
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            "user": {
+                "id": user.id,
+                "email": user.email,
+                "username": user.username,
+                "role": user.role,
+            },
+            "refresh": str(refresh),
+            "access": str(refresh.access_token),
+        }, status=status.HTTP_200_OK)
+        
