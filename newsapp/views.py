@@ -6,7 +6,7 @@ from django.http import HttpResponseForbidden
 from .forms import CommentForm
 from .serializers import NewsArticleSerializer, CategorySerializer, CommentSerializer
 from rest_framework import viewsets
-from .permissions import IsAdminOrEditorOrOwnerWriter   
+from .permissions import IsAdminOrEditorOrOwnerWriter, IsAdminOrEditor
 
 
 def index(request):
@@ -101,6 +101,7 @@ class NewsArticleViewSet(viewsets.ModelViewSet):
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer   
+    permission_classes = [IsAdminOrEditor]
     
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()

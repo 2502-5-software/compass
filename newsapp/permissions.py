@@ -19,3 +19,34 @@ class IsAdminOrEditorOrOwnerWriter(permissions.BasePermission):
             return True
         
         return getattr(obj, 'writer_id', None) == request.user.id
+
+
+class IsAdminOrEditor(permissions.BasePermission):
+    """
+    - Admins & Editors: can create/update/delete categories
+    - Everyone: read-only
+    """
+
+    message = "Only Admins and Editors can modify categories."
+
+    def has_permission(self, request, view):
+        # Everyone can read
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        # Only authenticated Admins/Editors can write
+        return (
+            request.user.is_authenticated
+            and getattr(request.user, "role", None) in ("ADMIN", "EDITOR")
+        )
+
+    def has_object_permission(self, request, view, obj):
+        # Safe methods always allowed
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        # Object-level perms same as global perms
+        return (
+            request.user.is_authenticated
+            and getattr(request.user, "role", None) in ("ADMIN", "EDITOR")
+        )
