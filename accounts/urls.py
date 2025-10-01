@@ -6,12 +6,10 @@ urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', logoutView.as_view(), name='logout'),
-    path('api/register/', RegisterAPIView.as_view(), name='register'),
+    path('api/register/', RegisterAPIView.as_view(), name='user-register'),
     path('api/users/', UserListAPIView.as_view(), name='users'),
     path('api/users/<int:pk>/assign-role/', AssignRoleAPIView.as_view(), name='assign-role'),
-    path("api/login/", LoginAPIView.as_view(), name='login'),
+    path("api/login/", LoginAPIView.as_view(), name='user-login'),
     path("api/profiles/<int:pk>/", ProfileDetailView.as_view(), name='profile-detail'),
-    
-    
 ]
 
