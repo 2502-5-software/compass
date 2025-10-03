@@ -7,8 +7,16 @@ from .forms import CommentForm
 from .serializers import NewsArticleSerializer, CategorySerializer, CommentSerializer
 from rest_framework import viewsets
 from .permissions import IsAdminOrEditorOrOwnerWriter, IsAdminOrEditor
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 
-# Ohm’s law and Kirchhoff’s laws
+auth_header = openapi.Parameter(
+    "Authorization",
+    openapi.IN_HEADER,
+    description="JWT access token. Format: Bearer <token>",
+    type=openapi.TYPE_STRING,
+    required=True
+)
 
 def index(request):
     articles = NewsArticle.objects.all().order_by('-published_at')[:5]
@@ -93,17 +101,66 @@ def update_news_article(request, article_id):
 
 
 class NewsArticleViewSet(viewsets.ModelViewSet):
+    """
+    API for managing News Articles.
+    - Writers can create their own.
+    - Editors/Admins can manage all.
+    """
     queryset = NewsArticle.objects.all()
     serializer_class = NewsArticleSerializer
     permission_classes = [IsAdminOrEditorOrOwnerWriter]
-    
+
+    @swagger_auto_schema(
+        operation_description="List all articles",
+        manual_parameters=[auth_header],
+        responses={200: NewsArticleSerializer(many=True)}
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        operation_description="Create a new article",
+        manual_parameters=[auth_header],
+        request_body=NewsArticleSerializer,
+        responses={201: NewsArticleSerializer}
+    )
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
+
     def perform_create(self, serializer):
         serializer.save(writer=self.request.user)
+
+
 class CategoryViewSet(viewsets.ModelViewSet):
+    """
+    API for managing Categories.
+    - Admin/Editor only.
+    """
     queryset = Category.objects.all()
     serializer_class = CategorySerializer   
     permission_classes = [IsAdminOrEditor]
-    
+
+    @swagger_auto_schema(
+        operation_description="List all categories",
+        manual_parameters=[auth_header],
+        responses={200: CategorySerializer(many=True)}
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+
 class CommentViewSet(viewsets.ModelViewSet):
+    """
+    API for managing Comments on Articles.
+    """
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer    
+
+    @swagger_auto_schema(
+        operation_description="List all comments",
+        manual_parameters=[auth_header],
+        responses={200: CommentSerializer(many=True)}
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
