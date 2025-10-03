@@ -13,6 +13,14 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+
+auth_header = openapi.Parameter(
+    "Authorization",
+    openapi.IN_HEADER,
+    description="JWT access token. Format: Bearer <token>",
+    type=openapi.TYPE_STRING,
+    required=True
+)
 class RegisterView(View):
     def get(self, request):
         form = UserRegistrationForm()
@@ -73,6 +81,7 @@ class UserListAPIView(generics.ListAPIView):
     
     @swagger_auto_schema(
         operation_description="Retrieve a list of all users (SuperAdmin only)",
+        manual_parameters=[auth_header],
         responses={200: UserSerializer(many=True)},
     )
     def get(self, request, *args, **kwargs):
@@ -86,6 +95,7 @@ class AssignRoleAPIView(generics.UpdateAPIView):
     
     @swagger_auto_schema(
         operation_description="Assign or change a user's role (SuperAdmin only)",
+        manual_parameters=[auth_header],
         request_body=RoleUpdateSerializer,
         responses={200: RoleUpdateSerializer()},
     )
@@ -95,22 +105,33 @@ class AssignRoleAPIView(generics.UpdateAPIView):
 class LoginAPIView(APIView):
     
     @swagger_auto_schema(
-        operation_description="User login to obtain JWT tokens",
-        request_body=LoginSerializer,
-        responses={200: openapi.Response('Login successful', schema=openapi.Schema(
+        request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             properties={
-                'user': openapi.Schema(type=openapi.TYPE_OBJECT, properties={
-                    'id': openapi.Schema(type=openapi.TYPE_INTEGER),
-                    'email': openapi.Schema(type=openapi.TYPE_STRING),
-                    'username': openapi.Schema(type=openapi.TYPE_STRING),
-                    'role': openapi.Schema(type=openapi.TYPE_STRING),
-                }),
-                'refresh': openapi.Schema(type=openapi.TYPE_STRING),
-                'access': openapi.Schema(type=openapi.TYPE_STRING),
-            }
-        ))},
-    )  
+                "email": openapi.Schema(type=openapi.TYPE_STRING, description="User email"),
+                "password": openapi.Schema(type=openapi.TYPE_STRING, description="User password"),
+            },
+            required=["email", "password"],
+        ),
+        responses={
+            200: openapi.Response(
+                description="Login success",
+                examples={
+                    "application/json": {
+                        "user": {
+                            "id": 1,
+                            "email": "john@example.com",
+                            "username": "john_doe",
+                            "role": "Admin"
+                        },
+                        "refresh": "your-refresh-token",
+                        "access": "your-access-token"
+                    }
+                },
+            ),
+            400: "Invalid credentials",
+        }
+    ) 
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -137,6 +158,7 @@ class ProfileDetailView(generics.RetrieveUpdateAPIView):
     
     @swagger_auto_schema(
         operation_description="Retrieve or update user profile",
+        manual_parameters=[auth_header],
         responses={200: ProfileDetailSerializer()},
     )
     def get(self, request, *args, **kwargs):
