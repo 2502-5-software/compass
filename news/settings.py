@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'newsapp',
     'cloudinary',
     'rest_framework',
+    'subscriptions',    
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [

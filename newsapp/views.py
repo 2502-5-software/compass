@@ -8,6 +8,7 @@ from .serializers import NewsArticleSerializer, CategorySerializer, CommentSeria
 from rest_framework import viewsets
 from .permissions import IsAdminOrEditorOrOwnerWriter, IsAdminOrEditor
 
+# Ohm’s law and Kirchhoff’s laws
 
 def index(request):
     articles = NewsArticle.objects.all().order_by('-published_at')[:5]
