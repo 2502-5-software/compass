@@ -50,3 +50,15 @@ class IsAdminOrEditor(permissions.BasePermission):
             request.user.is_authenticated
             and getattr(request.user, "role", None) in ("ADMIN", "EDITOR")
         )
+        
+class IsAdminOrEditorForUnsafe(permissions.BasePermission):
+    """
+    Custom permission to only allow Admins or Editors to create, update, or delete categories.
+    Safe methods (GET, HEAD, OPTIONS) are open to all authenticated users.
+    """
+
+    def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:  # GET, HEAD, OPTIONS
+            return True
+        return request.user.is_authenticated and request.user.role in ["ADMIN", "EDITOR"]
+

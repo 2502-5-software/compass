@@ -14,13 +14,6 @@ from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-auth_header = openapi.Parameter(
-    "Authorization",
-    openapi.IN_HEADER,
-    description="JWT access token. Format: Bearer <token>",
-    type=openapi.TYPE_STRING,
-    required=True
-)
 class RegisterView(View):
     def get(self, request):
         form = UserRegistrationForm()
@@ -81,7 +74,6 @@ class UserListAPIView(generics.ListAPIView):
     
     @swagger_auto_schema(
         operation_description="Retrieve a list of all users (SuperAdmin only)",
-        manual_parameters=[auth_header],
         responses={200: UserSerializer(many=True)},
     )
     def get(self, request, *args, **kwargs):
@@ -95,7 +87,6 @@ class AssignRoleAPIView(generics.UpdateAPIView):
     
     @swagger_auto_schema(
         operation_description="Assign or change a user's role (SuperAdmin only)",
-        manual_parameters=[auth_header],
         request_body=RoleUpdateSerializer,
         responses={200: RoleUpdateSerializer()},
     )
@@ -158,7 +149,6 @@ class ProfileDetailView(generics.RetrieveUpdateAPIView):
     
     @swagger_auto_schema(
         operation_description="Retrieve or update user profile",
-        manual_parameters=[auth_header],
         responses={200: ProfileDetailSerializer()},
     )
     def get(self, request, *args, **kwargs):

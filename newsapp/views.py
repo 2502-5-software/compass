@@ -6,17 +6,10 @@ from django.http import HttpResponseForbidden
 from .forms import CommentForm
 from .serializers import NewsArticleSerializer, CategorySerializer, CommentSerializer
 from rest_framework import viewsets
-from .permissions import IsAdminOrEditorOrOwnerWriter, IsAdminOrEditor
+from .permissions import IsAdminOrEditorOrOwnerWriter, IsAdminOrEditor, IsAdminOrEditorForUnsafe
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 
-auth_header = openapi.Parameter(
-    "Authorization",
-    openapi.IN_HEADER,
-    description="JWT access token. Format: Bearer <token>",
-    type=openapi.TYPE_STRING,
-    required=True
-)
 
 def index(request):
     articles = NewsArticle.objects.all().order_by('-published_at')[:5]
@@ -108,11 +101,10 @@ class NewsArticleViewSet(viewsets.ModelViewSet):
     """
     queryset = NewsArticle.objects.all()
     serializer_class = NewsArticleSerializer
-    permission_classes = [IsAdminOrEditorOrOwnerWriter]
+    permission_classes = [IsAdminOrEditorOrOwnerWriter, IsAdminOrEditorForUnsafe]
 
     @swagger_auto_schema(
         operation_description="List all articles",
-        manual_parameters=[auth_header],
         responses={200: NewsArticleSerializer(many=True)}
     )
     def list(self, request, *args, **kwargs):
@@ -120,7 +112,6 @@ class NewsArticleViewSet(viewsets.ModelViewSet):
 
     @swagger_auto_schema(
         operation_description="Create a new article",
-        manual_parameters=[auth_header],
         request_body=NewsArticleSerializer,
         responses={201: NewsArticleSerializer}
     )
@@ -138,11 +129,10 @@ class CategoryViewSet(viewsets.ModelViewSet):
     """
     queryset = Category.objects.all()
     serializer_class = CategorySerializer   
-    permission_classes = [IsAdminOrEditor]
+    permission_classes = [IsAdminOrEditor, IsAdminOrEditorForUnsafe]
 
     @swagger_auto_schema(
         operation_description="List all categories",
-        manual_parameters=[auth_header],
         responses={200: CategorySerializer(many=True)}
     )
     def list(self, request, *args, **kwargs):
@@ -158,7 +148,6 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     @swagger_auto_schema(
         operation_description="List all comments",
-        manual_parameters=[auth_header],
         responses={200: CommentSerializer(many=True)}
     )
     def list(self, request, *args, **kwargs):
