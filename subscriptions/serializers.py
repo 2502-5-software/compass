@@ -24,6 +24,7 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ["id", "name"]
+        ref_name = "SupscriptionsCategory"
 
 
 class SubscriptionPreferenceSerializer(serializers.ModelSerializer):
