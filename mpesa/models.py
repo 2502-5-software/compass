@@ -23,3 +23,24 @@ class MpesaRequest(models.Model):
         ordering = ['-timestamp']
         verbose_name = 'Mpesa Request'
         verbose_name_plural = 'Mpesa Requests'
+
+class MpesaResponse(models.Model):
+    request = models.ForeignKey(MpesaRequest, related_name='responses', on_delete=models.CASCADE)
+    response_code = models.CharField(max_length=10)
+    response_description = models.TextField()
+    merchant_request_id = models.CharField(max_length=50)
+    checkout_request_id = models.CharField(max_length=50)
+    customer_message = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Response to {self.request.phone_number} - code {self.response_code or 'pending'}"
+    
+    def is_successful(self):
+        return self.response_code == '0'  # Assuming '0' indicates success
+    is_successful.boolean = True
+    is_successful.short_description = 'Successful?' 
+    class Meta:
+        ordering = ['-timestamp']
+        verbose_name = 'Mpesa Response'
+        verbose_name_plural = 'Mpesa Responses'
