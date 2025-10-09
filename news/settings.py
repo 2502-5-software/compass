@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'accounts',
     'newsapp',
+    'mpesa',
     'cloudinary',
     'rest_framework',
     'subscriptions',    
