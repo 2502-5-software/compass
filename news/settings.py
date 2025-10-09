@@ -207,3 +207,9 @@ CORS_ALLOW_ALL_ORIGINS = True  # ⚠️ for dev only
 #     "http://127.0.0.1:8000",
 #     "http://localhost:8000",
 # ]
+
+# MPESA Configurations
+MPESA_CONSUMER_KEY = config('MPESA_CONSUMER_KEY')
+MPESA_CONSUMER_SECRET = config('MPESA_CONSUMER_SECRET')
+MPESA_SHORTCODE = config('MPESA_SHORTCODE')
+MPESA_PASSKEY = config('MPESA_PASSKEY')
