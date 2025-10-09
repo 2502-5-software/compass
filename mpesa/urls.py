@@ -1,5 +1,6 @@
 from django.urls import path
+from .views import stk_push
 
 urlpatterns = [ 
-    # Define your mpesa-related URL patterns here
+    path('stk-push/', stk_push, name='stk-push'),
 ]

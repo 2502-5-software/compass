@@ -54,7 +54,7 @@ def initiate_stk_push(mpesa_request):
     
     payload = {
         "BusinessShortCode": settings.MPESA_SHORTCODE,
-        "Password": generate_password(settings.MPESA_SHORTCODE, settings.MPESA_PASSKEY, timestamp),
+        "Password": generate_password(timestamp),
         "Timestamp": timestamp,
         "TransactionType": "CustomerPayBillOnline",
         "Amount": float(mpesa_request.amount),
